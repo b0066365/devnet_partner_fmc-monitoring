@@ -73,19 +73,49 @@ version: '3'
 services:
   influxdb: 
     image: influxdb
+    container_name: influxdb
     volumes:
       - devnet-influxdb-data:/var/lib/influxdb:z
+    networks:
+     - DevNet
     ports:
-      - 8080
-      
+      - 8086:8086
+
+  telegraf: 
+    image: telegraf
+    container_name: telegraf
+    volumes:
+      - $PWD/conf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - $PWD/conf/telegraf/telegraf.d/:/etc/telegraf/telegraf.d/:ro
+    networks:
+     - DevNet
+
+  grafana: 
+    image: grafana/grafana
+    container_name: grafana
+    env_file: env/grafna.env
+    volumes:
+      - devnet-grafana-data:/var/lib/grafana
+    networks:
+     - DevNet
+    ports:
+      - 3000:3000
+
 volumes:
   devnet-influxdb-data:
     driver: local
+  devnet-grafana-data:
+    driver: local
+
+networks:
+  DevNet:
 ```
+
 
 Grafana Environement File (grafana.env)
 ```
-
+GF_SERVER_ROOT_URL=http://devnet-mon-01.topgun.cisco.com
+GF_SECURITY_ADMIN_PASSWORD=devnet
 ```
 
 
