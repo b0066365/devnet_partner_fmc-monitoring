@@ -61,6 +61,7 @@ mkdir -p conf/telegraf/telegraf.d/
 
 ```
 mkdir -p conf/grafana
+mkdir env
 ```
 
 
@@ -80,6 +81,11 @@ services:
 volumes:
   devnet-influxdb-data:
     driver: local
+```
+
+Grafana Environement File (grafana.env)
+```
+
 ```
 
 
