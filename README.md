@@ -9,7 +9,7 @@ THIS IS A DEMO PROJECT - NOT INTENDED FOR PRODUCTION USE!
 * Based on Centos 7.6.1810 (Minimal ISO) - http://mirror.cj2.nl/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso
 * Update your System to the latests packages available
 ```
-yum install -y epel-release
+yum install -y epel-release git
 yum update -y
 ```
 
