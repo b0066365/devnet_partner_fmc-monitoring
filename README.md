@@ -125,4 +125,20 @@ GF_SECURITY_ADMIN_PASSWORD=devnet
 ***
 # Collecting Metrics
 ## Basic Metrics
+### Ping
+### TCP Check
+### HTTPS Check
+### Syslog
+/etc/rsyslog.conf
+```
+```
+Process & Ports
+```ss -tulnp | grep "514"```
+
+firewalld
+```
+ firewall-cmd --permanent --add-port=514/udp
+ firewall-cmd --reload
+```
+
 ## Advanced Metrics
