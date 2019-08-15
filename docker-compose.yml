@@ -17,6 +17,7 @@ services:
     volumes:
       - $PWD/conf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - $PWD/conf/telegraf/telegraf.d/:/etc/telegraf/telegraf.d/:ro
+      - $PWD/src/GetFMCAdv.py:/home/app/GetFMCAdv.py:ro
       - devnet-syslog-data:/var/log/devnet:ro
     networks:
      - DevNet
