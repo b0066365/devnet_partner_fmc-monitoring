@@ -10,18 +10,6 @@ services:
     ports:
       - 8086:8086
 
-  telegraf: 
-    image: telegraf
-    container_name: telegraf
-    command: telegraf --config-directory /etc/telegraf/telegraf.d
-    volumes:
-      - $PWD/conf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      - $PWD/conf/telegraf/telegraf.d/:/etc/telegraf/telegraf.d/:ro
-      - $PWD/src/GetFMCAdv.py:/home/app/GetFMCAdv.py:ro
-      - devnet-syslog-data:/var/log/devnet:ro
-    networks:
-     - DevNet
-
   grafana: 
     image: grafana/grafana
     container_name: grafana
@@ -38,7 +26,7 @@ services:
     container_name: rsyslog
     command: rsyslogd -nf /etc/rsyslog.conf
     volumes:
-      - devnet-syslog-data:/var/log/devnet
+      - $PWD/data/rsyslog/:/var/log/devnet
       - $PWD/conf/rsyslog/rsyslog.conf:/etc/rsyslog.conf:ro
     networks:
      - DevNet
