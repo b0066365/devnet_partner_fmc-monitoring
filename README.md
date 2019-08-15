@@ -125,6 +125,7 @@ GF_SECURITY_ADMIN_PASSWORD=devnet
 ***
 # Collecting Metrics
 ## Basic Metrics
+ln -s /opt/devnet/conf/telegraf/telegraf.d/ /etc/telegraf/
 ### Ping
 ### TCP Check
 ### HTTPS Check
@@ -142,3 +143,4 @@ firewalld
 ```
 
 ## Advanced Metrics
+yum install -y python-requests
