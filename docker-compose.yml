@@ -1,0 +1,55 @@
+version: '3'
+services:
+  influxdb: 
+    image: influxdb
+    container_name: influxdb
+    volumes:
+      - devnet-influxdb-data:/var/lib/influxdb:z
+    networks:
+     - DevNet
+    ports:
+      - 8086:8086
+
+  telegraf: 
+    image: telegraf
+    container_name: telegraf
+    command: telegraf --config-directory /etc/telegraf/telegraf.d
+    volumes:
+      - $PWD/conf/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - $PWD/conf/telegraf/telegraf.d/:/etc/telegraf/telegraf.d/:ro
+      - devnet-syslog-data:/var/log/devnet:ro
+    networks:
+     - DevNet
+
+  grafana: 
+    image: grafana/grafana
+    container_name: grafana
+    env_file: env/grafna.env
+    volumes:
+      - devnet-grafana-data:/var/lib/grafana
+    networks:
+     - DevNet
+    ports:
+      - 3000:3000
+
+  rsyslog:
+    image: b0066365/rsyslog:latest
+    container_name: rsyslog
+    command: rsyslogd -nf /etc/rsyslog.conf
+    volumes:
+      - devnet-syslog-data:/var/log/devnet
+      - $PWD/conf/rsyslog/rsyslog.conf:/etc/rsyslog.conf:ro
+    networks:
+     - DevNet
+    ports:
+      - 514:514/udp
+
+volumes:
+  devnet-influxdb-data:
+    driver: local
+  devnet-grafana-data:
+    driver: local
+  devnet-syslog-data:
+    driver: local
+networks:
+  DevNet:
