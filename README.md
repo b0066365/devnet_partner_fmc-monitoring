@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DevNet - FMC Insights
 Content for DevNet FMC Insights Session
 
@@ -144,3 +145,8 @@ firewalld
 
 ## Advanced Metrics
 yum install -y python-requests
+=======
+# devnet_partner_fmc-monitoring
+
+This Repo contains Content shown during Cisco DevNet Partner University @ Eschborn, Germany, 10.+11. September 2019
+>>>>>>> 9422e68b1a5a5813d4b3969758cc1e1eb46cea9f
