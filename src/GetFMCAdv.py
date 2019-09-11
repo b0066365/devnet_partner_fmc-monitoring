@@ -86,6 +86,25 @@ def FMC_Get(Settings, api_path):
   finally:
       if r : r.close()
       
+def FMC_Put(Settings, fmc_data, api_path):
+  server = "https://"+Settings["FMC_IP"]
+
+  url = server + api_path
+  if (url[-1] == '/'):
+      url = url[:-1]
+  headers = {'X-auth-access-token' : Settings["FMC_X-auth-access-token"]}
+  r = requests.put(url, json=fmc_data, headers=headers, verify=False)
+  status_code = r.status_code
+  resp = r.text
+  if status_code == 200 or status_code == 201 or status_code == 202:
+      json_resp = json.loads(resp)
+      if "id" in json_resp:
+        #print "FMC POST succesful for Object "+json_resp["id"]
+        return json_resp["id"]
+
+
+
+
 def GetDevices(Settings):
     Devices = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/devices/devicerecords?expanded=true")
     if "items" in Devices:
@@ -122,11 +141,35 @@ def GetUpgradePackages(Settings):
         print "fmc,hostname="+Settings["FMC_IP"]+" UpgradePackages=0"
 
 def GetDeviceID(Settings):
-  Devices = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/devicehapairs/ftddevicehapairs")
+  #Devices = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/devicehapairs/ftddevicehapairs")
+  Devices = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/devices/devicerecords?expanded=true")
 
   for Device in Devices["items"]:
+    #print Device
     if Settings["FMC_DEVICE"] == Device["name"]:
+      print Device["id"]
       return Device["id"]
+
+def GetACP(Settings):
+    ACP = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/policy/accesspolicies")
+    if "items" in ACP:
+        print "fmc,hostname="+Settings["FMC_IP"]+" ACP="+str(len(ACP["items"]))
+    else:
+        print "fmc,hostname="+Settings["FMC_IP"]+" ACP=0"
+
+def GetNetworks(Settings):
+    NET = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/object/networks")
+    if "items" in NET:
+        print "fmc,hostname="+Settings["FMC_IP"]+" Networks="+str(len(NET["items"]))
+    else:
+        print "fmc,hostname="+Settings["FMC_IP"]+" Networks=0"
+
+def GetHosts(Settings):
+    HOST = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/object/hosts")
+    if "items" in HOST:
+        print "fmc,hostname="+Settings["FMC_IP"]+" Hosts="+str(len(HOST["items"]))
+    else:
+        print "fmc,hostname="+Settings["FMC_IP"]+" Hosts=0"
 
 def GetAccessPolicies(Settings):
   AccessPolicies = FMC_Get(Settings, "/api/fmc_config/v1/domain/default/policy/accesspolicies")
@@ -161,34 +204,16 @@ def GetHitCounts(Settings):
 if __name__ == "__main__":
     Settings={}
 
-    
-
-      #config = ConfigParser.SafeConfigParser(allow_no_value=True)
-      #config.read('config.cfg')
-      ##Settings["UPDATE_INTERVAL"] = config.get('GLOBAL', 'UPDATE_INTERVAL')
-      #Settings["LOG_DIR"] = config.get('GLOBAL', 'LOG_DIR')
-      #Settings["LOG_LEVEL"] = config.get('GLOBAL', 'LOG_LEVEL')
-      #Settings["LOG_FILE"] = config.get('GLOBAL', 'LOG_FILE')
-
-      #Settings["FMC_IP"] = config.get('FMC', 'FMC_IP')
-      #Settings["FMC_USER"] = config.get('FMC', 'FMC_USER')
-      #Settings["FMC_PWD"] = base64.b64decode(config.get('FMC', 'FMC_PASSWORD'))
-      #Settings["FMC_PREFIX"] = config.get('FMC', 'FMC_PREFIX')
-      #Settings["LOG_DIR"] =Settings["LOG_DIR"]+"/aci2fmc.log"
-
-      #Settings["FMC_IP"] = "10.1.17.99"
     Settings["FMC_IP"] = "devnet-fmc-01"
     Settings["FMC_USER"] = "devnet-api-01"
     Settings["FMC_PWD"] = "devnet123"
     Settings["FMC_VERSION"] = 6.4
 
-    Settings["FMC_ACPNAME"] = "SECFAB_DemoPolicy"
-    Settings["FMC_DEVICE"] = "FTD-91-92_HA"
+    Settings["FMC_ACPNAME"] = "DevNet.Pol"
+    Settings["FMC_DEVICE"] = "DevNet-FTD-01"
 
-      #Settings["INFLUXDB_IP"] = config.get('INFLUXDB', 'INFLUXDB_IP')
-      #Settings["INFLUXDB_DB"] = config.get('INFLUXDB', 'INFLUXDB_DB')
 
-      #print "Login..."
+    #print "Login..."
     Settings["FMC_X-auth-access-token"] = FMC_Login(Settings)
 
     GetDevices(Settings)      
@@ -196,8 +221,10 @@ if __name__ == "__main__":
     GetDeviceGroups(Settings)
     #GetHAPairs(Settings)
     GetUpgradePackages(Settings)
-    #if Settings["FMC_VERSION"] > 6.3:
-      #GetHitCounts(Settings)
+    GetACP(Settings)
+    GetNetworks(Settings)
+    GetHosts(Settings)
+#    if Settings["FMC_VERSION"] > 6.3:
+#      GetHitCounts(Settings)
 
-      #print "Logout..."
     FMC_Logout(Settings)
